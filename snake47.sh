@@ -53,7 +53,7 @@ interface() {         # Dessine les bordures de l'interface
 
 initialisation() {
     Lines=`tput lines`; Cols=`tput cols`;     #	Longueur / Largeur écran
-    xline=$((Lines/2)); ycols=4;              #Position de départ
+    xline=$((Lines/2)); ycols=4;              #Position de départ  Utilité du ycols ???
     xscore=$Lines;      yscore=$((Cols/2));   #Imprimer position du score
     xcent=$xline;       ycent=$yscore;        #Emplacement point central
     xrand=0;            yrand=0;              #Point aléatoire
@@ -62,18 +62,18 @@ initialisation() {
     
     snake="OOOO ";                            #Initialisation du serpent
     pos=(right right right right right);      #Direction noeud de départ
-    xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud
-    ypt=(5 4 3 2 1);                          #Coordonné y de départ de chaque noeud
+    xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud  Horizontal
+    ypt=(5 4 3 2 1);                          #Coordonné y de départ de chaque noeud Vertical
     speed=(0.02 0.1 0.15);  spk=${spk:-1};    #Vitesse par défaut
 
     interface $((Lines-1)) $Cols  #passage des arguments de position d'écran à interface
 }
 
 pause() {               #Jeu de rôle
-    echo -en "\033[$Lines;$((Cols-50))H\e[33mGame paused, Use space or enter key to continue\e[0m";
+    echo -en "\033[$Lines;$((Cols-50))H\e[33mJeu en pause !  Entrer ou Espace\e[0m";
     while read -n 1 space; do
         [[ ${space:-enter} = enter ]] && \
-            echo -en "\033[$Lines;$((Cols-50))H\e[33mPress <space> or enter to pause game           \e[0m" && return;
+            echo -en "\033[$Lines;$((Cols-50))H\e[33m Pause ? Espace / Entrer           \e[0m" && return;
         [[ ${space:-enter} = q ]] && quitter;
     done
 }
