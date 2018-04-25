@@ -33,7 +33,7 @@ quitter() {  #Fonction pour  Quitter le Jeu
     exit 0;
 }
 
-interface() {         # Dessine les bordures de l'interface
+interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -1 $2= largeur cadre
     clear; # clear de l'interface
     color="\e[33m*\e[0m";  #couleur autour 33 = jaune
     for (( i = 0; i < $1; i++ )); do   #dessin des latéaux du cadre
