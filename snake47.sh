@@ -99,7 +99,7 @@ vitesse() {                #Gestion de la vitesse / mise à jour
 }
 
 Direction() {                                   #Mise à jour de la direction
-    case ${key:-enter} inœ
+    case ${key:-enter} in
         5) [[ ${pos[0]} != "up"    ]] && pos[0]="down";;		#gestion des auto-collisions
         8) [[ ${pos[0]} != "down"  ]] && pos[0]="up";;
         4) [[ ${pos[0]} != "right" ]] && pos[0]="left";;
