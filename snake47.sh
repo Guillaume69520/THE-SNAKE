@@ -35,11 +35,12 @@ quitter() {  #Fonction pour  Quitter le Jeu
 
 interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -1 $2= largeur
     clear; # clear de l'interface
-    color="\e[33m*\e[0m";  #couleur autour 33 = jaune
+    color="\e[33m*\e[0m";  #couleur autour 33 = jaune et motif *
     for (( i = 0; i < $1; i++ )); do   #dessin des latéaux du cadre
-        echo -ne "\033[$i;0H${color}";  #coutour de gauche
+        echo -ne "\033[$i;0H${color}";  #coutour de gauche  
         echo -ne "\033[$i;$2H${color}"; #contour de droite
     done
+    
 
     for (( i = 0; i <= $2; i++ )); do   #dessin cadre haut et bas
         echo -ne "\033[0;${i}H${color}"; #haut
@@ -48,7 +49,10 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
 
     vitesse 0; #affichage de la vitesse sur l'interface
     echo -ne "\033[$Lines;$((yscore-10))H\e[36mScores: 0\e[0m"; #affichage du score en bas
-    echo -ne "\033[$Lines;$((Cols-50))H\e[33mPause Espace/Entrer\e[0m";
+    echo -ne "\033[$Lines;$((Cols-80))H\e[33mPause Espace/Entrer\e[0m";
+    echo -ne "\033[$Lines;$((Cols-25))H\e[33m Timer : \e[0m";
+    timer="00:00"
+    echo -ne "\033[$Lines;$((Cols-17))H\e[31m $timer\e[0m"; #timer 
 }
 
 initialisation() {
@@ -70,10 +74,10 @@ initialisation() {
 }
 
 pause() {               #Jeu de rôle
-    echo -en "\033[$Lines;$((Cols-50))H\e[33mJeu en pause !  Entrer ou Espace\e[0m";
+    echo -en "\033[$Lines;$((Cols-80))H\e[33mJeu en pause !  Entrer ou Espace\e[0m";
     while read -n 1 space; do
         [[ ${space:-enter} = enter ]] && \
-            echo -en "\033[$Lines;$((Cols-50))H\e[33m Pause ? Espace / Entrer           \e[0m" && return;
+            echo -en "\033[$Lines;$((Cols-80))H\e[33m Pause ? Espace / Entrer           \e[0m" && return;
         [[ ${space:-enter} = q ]] && quitter;
     done
 }
@@ -139,7 +143,7 @@ aleatoire() {                               #Génération points et nombres alé
 
 nouvelle_partie() {                                
     initialisation;
-    while true; do
+    while true; do   #boucle principale
         read -t ${speed[$spk]} -n 1 key;
         [[ $? -eq 0 ]] && Direction;
 
@@ -166,6 +170,7 @@ nouvelle_partie() {
         (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore));
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore";
+        
     done
 }
 
@@ -175,9 +180,13 @@ affichage() {
         echo -ne "\033[$((x+i));${y}H\e[45m${perdue[$i]}\e[0m";
     done
     echo -ne "\033[$((x+3));$((ycent+1))H\e[45m${sumscore}\e[0m";
+    
+    
+    
 }
 
 serpent() {
+	
     initialisation;
 
     local x=$((xcent-5)) y=$((ycent-25))
