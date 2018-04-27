@@ -1,4 +1,9 @@
-Mettre un compteur qui change la rapidité en fonction 
+Fait :
+
+Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse()
+
+A faire :
+
 Vitesse progressive en fonction de la durée de jeu
 Obstacle Bonbon spécial
 Snake en Or
