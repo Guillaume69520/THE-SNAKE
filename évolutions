@@ -1,11 +1,11 @@
 Fait :
 
-Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse()
+Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse() => guillaume
 
 A faire :
 
-Vitesse progressive en fonction de la durée de jeu
-Obstacle Bonbon spécial
-Snake en Or
-Jouer une musique alsa 
+Mur / collisions => Mathieu
+Obstacle Bonbon spécial => Divise le snake en deux => guillaume je pense
+Snake en Or => Après 2 victoires     On stocke les résultat dans un fichier et on le parcours  avec awk  !!! => guillaume
+Jouer une musique alsa => maxime
 							
