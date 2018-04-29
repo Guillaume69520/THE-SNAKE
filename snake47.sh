@@ -46,6 +46,7 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
     vitesse 0;    #affichage de la vitesse sur l'interface
     echo -ne "\033[$Lines;$((yscore-10))H\e[36mScores: 0\e[0m"; #affichage du score en bas
     echo -ne "\033[$Lines;$((Cols-80))H\e[33mPause Espace/Entrer\e[0m";
+     [ -f ./skill.txt  ] && echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : OR!!! \e[0m" || echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : Aucun... \e[0m";
      
 }
 
