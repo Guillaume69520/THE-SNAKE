@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Noeud = corp du serpent (des zéros)
+#Noeud = corp du serpent (des zéros 0000 de base)
 
 perdue=(
     '                                                      '
@@ -26,7 +26,7 @@ quitter() {  #Fonction pour  Quitter le Jeu
     stty echo;  #echo de récupération (affichage sur le shell après jeu)
     tput rmcup; #Ecran de récupération
     tput cvvis; #Curseur de récupération
-    exit 0;
+    exit 0; #fin du programme
 }
 
 interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -1 $2= largeur
@@ -107,7 +107,10 @@ Direction() {                                   #Mise à jour de la direction
     esac
 }
 
-ajout_noeud() {                                 #Ajouter des noeuds au serpent
+ajout_noeud() {
+    
+   
+                    #Ajouter des noeuds au serpent
     snake="0$snake";  #ajout d'un zéro
     pos=(${pos[0]} ${pos[@]});
     xpt=(${xpt[0]} ${xpt[@]});
@@ -121,7 +124,7 @@ ajout_noeud() {                                 #Ajouter des noeuds au serpent
         (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crash du serpent
     done 
      
-    [[ $foodscore == "9" ]] &&  echo "hello" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";
+     echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";
     
     return 0;
 }
@@ -132,7 +135,7 @@ aleatoire() {                               #Génération points et nombres alé
     foodscore=$((RANDOM%9+1));
 
     echo -ne "\033[$xrand;${yrand}H$foodscore";
-    liveflag=0;    
+    liveflag=0;                                      #passage à 0 pour éviter de générer encore si le point n'est pas manger par le serpent
 }
 evolution_vitesse(){  #évolution de la vitesse en fonction du score
         (($sumscore <=4 )) && spk=2 && vitesse;   #clio
@@ -150,7 +153,8 @@ nouvelle_partie() {
         ((liveflag==0)) || aleatoire;
         if (( sumnode > 0 )); then
             ((sumnode--));
-            ajout_noeud; (($?==0)) || return 1;
+             ajout_noeud; 
+             (($?==0)) || return 1;
         else
             maj 0; 
             echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";
@@ -166,10 +170,12 @@ nouvelle_partie() {
 
         local x=${xpt[0]} y=${ypt[0]}
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
+        
 
-        (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore));
+        (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score
+         
 
-        echo -ne "\033[$xscore;$((yscore-2))H$sumscore";
+        echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
         
     done
 }
