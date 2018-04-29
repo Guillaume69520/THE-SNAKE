@@ -161,11 +161,12 @@ nouvelle_partie() {
 
             for (( i = $((${#snake}-1)); i > 0; i-- )); do
                 maj $i;
-                echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";
+                echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";  
 
                 (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crashed
                 [[ ${pos[$((i-1))]} = ${pos[$i]} ]] || pos[$i]=${pos[$((i-1))]};
             done
+        
         fi
 
         local x=${xpt[0]} y=${ypt[0]}
@@ -191,6 +192,27 @@ affichage() {
     
 }
 
+sauvegarde(){
+
+        [ ! -f "./sauvegarde.txt" ] && touch sauvegarde.txt;  #vérifier si le fichier existe 
+    
+        nbpartie=$(grep Score ./sauvegarde.txt | wc -l)  #calcul nombre de parties
+
+        (($sumscore>1)) &&  echo "Score de la partie numéro "$nbpartie ":" $sumscore "Bravo" >> sauvegarde.txt || echo "Score de la partie numéro "$nbpartie ":" $sumscore >> sauvegarde.txt  #affichage score dans sauvegarde.txt
+
+        if (($nbpartie > 0)); then
+
+        nextscore=$(($nbpartie+1))
+
+        first_bravo=$(awk 'NR == '$nbpartie' {print $9}' ./sauvegarde.txt)   #récupère le premier bravo
+        second_bravo=$(awk 'NR == '$nextscore' {print $9}' ./sauvegarde.txt)   #récupère le deuxième bravo
+
+        
+        [[ $first_bravo == "Bravo" ]] && [[ $second_bravo == "Bravo" ]] && echo "OR" >> skill.txt;    #si deux bravo donc deux parties consécutives gagnées on créer skills.txt
+        
+        fi
+}
+
 serpent() {
     
     initialisation;
@@ -207,6 +229,9 @@ serpent() {
     
     while true; do
         nouvelle_partie;
+        
+        sauvegarde;
+
         affichage;
         while read -n 1 anykey; do
             [[ $anykey = n ]] && break;
