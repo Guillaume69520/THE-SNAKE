@@ -124,7 +124,7 @@ ajout_noeud() {
         (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crash du serpent
     done 
      
-     echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";
+     [ -f ./skill.txt  ] &&  echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";  
     
     return 0;
 }
@@ -157,11 +157,11 @@ nouvelle_partie() {
              (($?==0)) || return 1;
         else
             maj 0; 
-            echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";
+            [ -f ./skill.txt  ] && echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";   
 
             for (( i = $((${#snake}-1)); i > 0; i-- )); do
                 maj $i;
-                echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";  
+                 [ -f ./skill.txt  ] && echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[33m${snake[@]:$i:1}\e[0m" || echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";    
 
                 (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crashed
                 [[ ${pos[$((i-1))]} = ${pos[$i]} ]] || pos[$i]=${pos[$((i-1))]};
