@@ -162,7 +162,7 @@ nouvelle_partie() {
 
         ((liveflag==0)) || aleatoire;
         if (( sumnode > 0 )); then
-            ((sumnode--));
+            ((sumnode--));   # on décrémente jusqu'à zéro pour ajouter les noeud un par un 
              ajout_noeud; 
              (($?==0)) || return 1;
         else
@@ -183,7 +183,7 @@ nouvelle_partie() {
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
         
 
-        (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score
+        (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score donc liveflag à 1 pour générer un nouveau nombre / sumnode += foodscore pour ajouter les noeuds et ajout du score
          
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
