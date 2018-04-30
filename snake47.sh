@@ -19,7 +19,7 @@ jeux=(
     '           Espace ou entrer  Joue / Pause          '
     '               q   Quitter le jeu                  '
     '         Appuyer sur Entrer pour commencer !!      '
-    '                                                   '
+    '    Skin Or pour Deux parties consécutives gagnées '
 );
 
 quitter() {  #Fonction pour  Quitter le Jeu 
