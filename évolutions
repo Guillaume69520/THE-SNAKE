@@ -1,7 +1,7 @@
 Fait :
 
 Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse() => guillaume
-Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skill.txt    => guillaume  
+Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skin.txt    => guillaume  
 
 A faire :
 
@@ -10,4 +10,5 @@ Mur / collisions => Mathieu
 Obstacle Bonbon spécial => Divise le snake en deux => guillaume (j'ai regarder mais ça va être chaud de l'intégrer car le code n'est vraiment pas prévu pour ça...
 
 Jouer une musique alsa => maxime
-							
+
+Il faidrait que la partie puisse se terminer (genre score de 100) => On affiche ensuite un écran ou c'est écrit gagné et il faut deux parties à 100 point pour avoir le serpent en or 
