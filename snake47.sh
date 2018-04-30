@@ -46,7 +46,7 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
     vitesse 0;    #affichage de la vitesse sur l'interface
     echo -ne "\033[$Lines;$((yscore-10))H\e[36mScores: 0\e[0m"; #affichage du score en bas
     echo -ne "\033[$Lines;$((Cols-80))H\e[33mPause Espace/Entrer\e[0m";
-     [ -f ./skill.txt  ] && echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : OR!!! \e[0m" || echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : Aucun... \e[0m";
+     [ -f ./skin.txt  ] && echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : OR!!! \e[0m" || echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : Aucun... \e[0m";
      
 }
 
@@ -125,7 +125,7 @@ ajout_noeud() {
         (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crash du serpent
     done 
      
-     [ -f ./skill.txt  ] &&  echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";  
+     [ -f ./skin.txt  ] &&  echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";  
     
     return 0;
 }
@@ -158,11 +158,11 @@ nouvelle_partie() {
              (($?==0)) || return 1;
         else
             maj 0; 
-            [ -f ./skill.txt  ] && echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";   
+            [ -f ./skin.txt  ] && echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";   
 
             for (( i = $((${#snake}-1)); i > 0; i-- )); do
                 maj $i;
-                 [ -f ./skill.txt  ] && echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[33m${snake[@]:$i:1}\e[0m" || echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";    
+                 [ -f ./skin.txt  ] && echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[33m${snake[@]:$i:1}\e[0m" || echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";    
 
                 (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crashed
                 [[ ${pos[$((i-1))]} = ${pos[$i]} ]] || pos[$i]=${pos[$((i-1))]};
@@ -209,7 +209,7 @@ sauvegarde(){
         second_bravo=$(awk 'NR == '$nextscore' {print $9}' ./sauvegarde.txt)   #récupère le deuxième bravo
 
         
-        [[ $first_bravo == "Bravo" ]] && [[ $second_bravo == "Bravo" ]] && echo "OR" >> skill.txt;    #si deux bravo donc deux parties consécutives gagnées on créer skills.txt
+        [[ $first_bravo == "Bravo" ]] && [[ $second_bravo == "Bravo" ]] && echo "OR" >> skin.txt;    #si deux bravo donc deux parties consécutives gagnées on créer skills.txt
         
         fi
 }
