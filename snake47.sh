@@ -12,14 +12,23 @@ perdue=(
 );
 
 jeux=(
-    '                                                   '
-    '                ~~~ THE S N A K E ~~~              '
-    '                                                   '
-    '          Auteurs : Maxime, Mathieu, Guillaume     '
-    '           Espace ou entrer  Joue / Pause          '
-    '               q   Quitter le jeu                  '
-    '         Appuyer sur Entrer pour commencer !!      '
-    '    Skin Or pour Deux parties consécutives gagnées '
+    '                                                          '
+    '                ~~~ THE S N A K E ~~~                     '
+    '                                                          '
+    '          Auteurs : Maxime, Mathieu, Guillaume            '
+    '             Espace ou entrer  Joue / Pause               '
+    '                  q   Quitter le jeu                      '
+    '           Appuyer sur Entrer pour commencer !!           '
+    '  Skin Or pour Deux parties consécutives gagnées (30 pts) '
+);
+
+gagne=(                                                                           
+    '                                                      '
+    '                      Bravo !!!                       '
+    '                                                      '
+    '                   Score:                             '
+    '          Appuyer sur Q pour Quitter                  '
+    '          Appuyer sur n pour une nouvelle partie      ' 
 );
 
 quitter() {  #Fonction pour  Quitter le Jeu 
@@ -178,15 +187,30 @@ nouvelle_partie() {
          
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
+
+        (($sumscore>29)) && return 1;   #si on fait 100 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
         
     done
 }
 
 affichage() {
     local x=$((xcent-4)) y=$((ycent-25))
-    for (( i = 0; i < 8; i++ )); do
-        echo -ne "\033[$((x+i));${y}H\e[45m${perdue[$i]}\e[0m";
-    done
+    
+	if (($sumscore>29)); then                                          
+	
+		for (( i = 0; i < 8; i++ )); do
+			echo -ne "\033[$((x+i));${y}H\e[45m${gagne[$i]}\e[0m";
+		done
+	else
+	
+		for (( i = 0; i < 8; i++ )); do
+			echo -ne "\033[$((x+i));${y}H\e[45m${perdue[$i]}\e[0m";
+		done
+	
+	fi
+
+
+
     echo -ne "\033[$((x+3));$((ycent+1))H\e[45m${sumscore}\e[0m";
     
     
@@ -199,7 +223,7 @@ sauvegarde(){
     
         nbpartie=$(grep Score ./sauvegarde.txt | wc -l)  #calcul nombre de parties
 
-        (($sumscore>1)) &&  echo "Score de la partie numéro "$nbpartie ":" $sumscore "Bravo" >> sauvegarde.txt || echo "Score de la partie numéro "$nbpartie ":" $sumscore >> sauvegarde.txt  #affichage score dans sauvegarde.txt
+        (($sumscore>29)) &&  echo "Score de la partie numéro "$nbpartie ":" $sumscore "Bravo" >> sauvegarde.txt || echo "Score de la partie numéro "$nbpartie ":" $sumscore >> sauvegarde.txt  #affichage score dans sauvegarde.txt
 
         if (($nbpartie > 0)); then
 
