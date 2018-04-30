@@ -1,12 +1,13 @@
 Fait :
 
 Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse() => guillaume
-Snake en Or => Après 2 victoires consécutives    => guillaume  
+Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skill.txt    => guillaume  
 
 A faire :
 
-Mur / collisions => Mathieu
-Obstacle Bonbon spécial => Divise le snake en deux => guillaume je pense
-Snake en Or => Après 2 victoires consécutives    => guillaume  en cours 
+Mur / collisions => Mathieu 
+
+Obstacle Bonbon spécial => Divise le snake en deux => guillaume (j'ai regarder mais ça va être chaud de l'intégrer car le code n'est vraiment pas prévu pour ça...
+
 Jouer une musique alsa => maxime
 							
