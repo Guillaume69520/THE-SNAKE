@@ -1,15 +1,17 @@
 Fait :
 
 Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse() => guillaume
+Affichage écran gagné si on atteinds un certains score => guillaume
 Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skin.txt    => guillaume  
+Bonus étoile => Permet d'avoir 20 points d'un coup sans ajout de noeud (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
+Bonus tortue => Permet de ralentir pendant un petit moment et après retour à la normal (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
+
+Jouer musique => maxime est en train de le faire (test en cours)
 
 A faire :
 
 Mur / collisions => Mathieu 
 
-Obstacle Bonbon spécial => Divise le snake en deux => guillaume (j'ai regarder mais ça va être chaud de l'intégrer car le code n'est vraiment pas prévu pour ça...
+bonbon magique qui supprime des noeuds => annulé le code n'est pas fait pour enlever des noeuds
 
-Jouer une musique alsa => maxime
 
-Il faudrait que la partie puisse se terminer (genre score de 100) 
-=> On affiche ensuite un écran ou c'est écrit gagné et il faut deux parties à 100 point pour avoir le serpent en or 
