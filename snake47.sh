@@ -67,7 +67,8 @@ initialisation() {
     xrand=0;            yrand=0;              #Point aléatoire
     sumscore=0;         liveflag=1;           #Score total + drapeau présence de point
     sumnode=0;          foodscore=0;          #Longueur totale des noeuds et des points à augmenter
-    byebye=0;
+    byebyeetoile=0;
+    byebyetortue=0;
     snake="0000 ";                            #Initialisation du serpent
     pos=(right right right right right);      #Direction noeud de départ
     xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud  Horizontal
@@ -144,41 +145,63 @@ ajout_noeud() {  #Ajouter des noeuds au serpent
 aleatoire() {                               #Génération points et nombres aléatoires
     xrand=$((RANDOM%(Lines-3)+2));
     yrand=$((RANDOM%(Cols-2)+2));
-    foodscore=$((RANDOM%10+1)); #generer entre 1 et 10
-
-    if ((foodscore==10)); then
-		 echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m"; 
-		 byebye=100 
-
+    foodscore=$((RANDOM%11+1)); #generer entre 1 et 11
+  
+    if ((foodscore==10)) || ((foodscore==11)); then
+		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m" && byebyeetoile=100;
+		 ((foodscore==11)) && echo -ne "\033[$xrand;${yrand}H\e[33m🐢\e[0m" && byebyetortue=100;
+		 
 		else
 		 echo -ne "\033[$xrand;${yrand}H$foodscore";  #si 10 affiche * qui incrémente le score de 10 sans augmenter la taille du serpent
     fi
+
     liveflag=0;                                      #passage à 0 pour éviter de générer encore si le point n'est pas manger par le serpent
 }
 evolution_vitesse(){  #évolution de la vitesse en fonction du score
+
         (($sumscore <=4 )) && spk=2 && vitesse;   #clio
         (($sumscore > 5)) && spk=1 && vitesse;    #Golf
         (($sumscore > 15)) && spk=0 && vitesse;   #ferrari
         }
  
-bonus(){ #après un certains temps supprime l'étoile bonus
+bonus_etoile(){ #après un certains temps supprime l'étoile bonus
 
-	if ((byebye>0)); then
-
-    	    ((byebye--))
-
+	if ((byebyeetoile>0)); then
+    	    ((byebyeetoile--))
     	 else
     	  echo -ne "\033[$xrand;${yrand}H\e[30m★\e[0m"
     	  liveflag=1;
-
     	fi
+    	(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumscore+=20));
 }
+
+ bonus_vitesse(){ #rend le serpent moins rapide pendant un petit moment
+
+ 	if ((byebyetortue>0)); then
+    	    ((byebyetortue--))
+    	 else
+    	  echo -ne "\033[$xrand;${yrand}H\e[30m🐢\e[0m"
+    	  liveflag=1;
+    	fi
+    	(( x==xrand && y==yrand )) && ((liveflag=1)) && slow=100;
+
+ }
 
 nouvelle_partie() {      
 
     initialisation;
     while true; do   #boucle principale
-        evolution_vitesse;
+
+    	if ((slow>0)); then  #si bonus actif on réduit la vitesse et quand slow=0 on revient à la normal
+
+    		spk=2 && vitesse;
+    		((slow--));
+
+    	else
+           evolution_vitesse; 
+
+        fi
+
         read -t ${speed[$spk]} -n 1 key;
         [[ $? -eq 0 ]] && Direction;
 
@@ -207,15 +230,13 @@ nouvelle_partie() {
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
        
 		
-		if ((foodscore==10)); then
-
-		bonus;
-		(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumscore+=20));
-
+		if ((foodscore==10)) || ((foodscore==11)); then
+		 	((foodscore==10)) && bonus_etoile;
+			((foodscore==11)) && bonus_vitesse;
+		 
 		else
-
-        (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score donc liveflag à 1 pour générer un nouveau nombre / sumnode += foodscore pour ajouter les noeuds et ajout du score
-         
+			(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score donc liveflag à 1 pour générer un nouveau nombre / sumnode += foodscore pour ajouter les noeuds et ajout du score
+		 
     	fi
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
