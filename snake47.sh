@@ -67,7 +67,7 @@ initialisation() {
     xrand=0;            yrand=0;              #Point aléatoire
     sumscore=0;         liveflag=1;           #Score total + drapeau présence de point
     sumnode=0;          foodscore=0;          #Longueur totale des noeuds et des points à augmenter
-    
+    byebye=0;
     snake="0000 ";                            #Initialisation du serpent
     pos=(right right right right right);      #Direction noeud de départ
     xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud  Horizontal
@@ -117,10 +117,9 @@ Direction() {                                   #Mise à jour de la direction
     esac
 }
 
-ajout_noeud() {
+ajout_noeud() {  #Ajouter des noeuds au serpent
     
-   
-                    #Ajouter des noeuds au serpent
+
     snake="0$snake";  #ajout d'un zéro
     pos=(${pos[0]} ${pos[@]});
     xpt=(${xpt[0]} ${xpt[@]});
@@ -136,15 +135,24 @@ ajout_noeud() {
      
      [ -f ./skin.txt  ] &&  echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";  
     
+ 
+
     return 0;
 }
+
 
 aleatoire() {                               #Génération points et nombres aléatoires
     xrand=$((RANDOM%(Lines-3)+2));
     yrand=$((RANDOM%(Cols-2)+2));
-    foodscore=$((RANDOM%9+1));
+    foodscore=$((RANDOM%10+1)); #generer entre 1 et 10
 
-    echo -ne "\033[$xrand;${yrand}H$foodscore";
+    if ((foodscore==10)); then
+		 echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m"; 
+		 byebye=100 
+
+		else
+		 echo -ne "\033[$xrand;${yrand}H$foodscore";  #si 10 affiche * qui incrémente le score de 10 sans augmenter la taille du serpent
+    fi
     liveflag=0;                                      #passage à 0 pour éviter de générer encore si le point n'est pas manger par le serpent
 }
 evolution_vitesse(){  #évolution de la vitesse en fonction du score
@@ -152,15 +160,30 @@ evolution_vitesse(){  #évolution de la vitesse en fonction du score
         (($sumscore > 5)) && spk=1 && vitesse;    #Golf
         (($sumscore > 15)) && spk=0 && vitesse;   #ferrari
         }
-        
-nouvelle_partie() {                                
+ 
+bonus(){ #après un certains temps supprime l'étoile bonus
+
+	if ((byebye>0)); then
+
+    	    ((byebye--))
+
+    	 else
+    	  echo -ne "\033[$xrand;${yrand}H\e[30m★\e[0m"
+    	  liveflag=1;
+
+    	fi
+}
+
+nouvelle_partie() {      
+
     initialisation;
     while true; do   #boucle principale
         evolution_vitesse;
         read -t ${speed[$spk]} -n 1 key;
         [[ $? -eq 0 ]] && Direction;
 
-        ((liveflag==0)) || aleatoire;
+        ((liveflag==0)) || aleatoire; #si liveflag 0 on générer un nouveau foodscor
+
         if (( sumnode > 0 )); then
             ((sumnode--));   # on décrémente jusqu'à zéro pour ajouter les noeud un par un 
              ajout_noeud; 
@@ -178,13 +201,22 @@ nouvelle_partie() {
             done
         
         fi
+    
 
         local x=${xpt[0]} y=${ypt[0]}
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
-        
+       
+		
+		if ((foodscore==10)); then
+
+		bonus;
+		(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumscore+=20));
+
+		else
 
         (( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score donc liveflag à 1 pour générer un nouveau nombre / sumnode += foodscore pour ajouter les noeuds et ajout du score
          
+    	fi
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
 
@@ -209,12 +241,8 @@ affichage() {
 	
 	fi
 
-
-
     echo -ne "\033[$((x+3));$((ycent+1))H\e[45m${sumscore}\e[0m";
-    
-    
-    
+       
 }
 
 sauvegarde(){
