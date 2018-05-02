@@ -1,3 +1,7 @@
+
+Attention : Les tests ont étét réalisées avec un jeu en plein écran (petit écran risque d'avoir des problèmes avec l'affichage du bas)
+
+
 Fait :
 
 Changement vitesse en fonction du score => Terminé => Fonction evolution_vitesse() => guillaume
