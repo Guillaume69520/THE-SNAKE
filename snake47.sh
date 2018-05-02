@@ -148,8 +148,8 @@ aleatoire() {                               #Génération points et nombres alé
     foodscore=$((RANDOM%11+1)); #generer entre 1 et 11
   
     if ((foodscore==10)) || ((foodscore==11)); then
-		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m" && byebyeetoile=100;
-		 ((foodscore==11)) && echo -ne "\033[$xrand;${yrand}H\e[33m🐢\e[0m" && byebyetortue=100;
+		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m" && byebyeetoile=150;
+		 ((foodscore==11)) && echo -ne "\033[$xrand;${yrand}H\e[33m🐢\e[0m" && byebyetortue=150;
 		 
 		else
 		 echo -ne "\033[$xrand;${yrand}H$foodscore";  #si 10 affiche * qui incrémente le score de 10 sans augmenter la taille du serpent
@@ -241,7 +241,7 @@ nouvelle_partie() {
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
 
-        (($sumscore>29)) && return 1;   #si on fait 100 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
+        (($sumscore>50)) && return 1;   #si on fait 50 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
         
     done
 }
@@ -249,7 +249,7 @@ nouvelle_partie() {
 affichage() {
     local x=$((xcent-4)) y=$((ycent-25))
     
-	if (($sumscore>29)); then                                          
+	if (($sumscore>50)); then                                          
 	
 		for (( i = 0; i < 8; i++ )); do
 			echo -ne "\033[$((x+i));${y}H\e[45m${gagne[$i]}\e[0m";
@@ -272,7 +272,7 @@ sauvegarde(){
     
         nbpartie=$(grep Score ./sauvegarde.txt | wc -l)  #calcul nombre de parties
 
-        (($sumscore>29)) &&  echo "Score de la partie numéro "$nbpartie ":" $sumscore "Bravo" >> sauvegarde.txt || echo "Score de la partie numéro "$nbpartie ":" $sumscore >> sauvegarde.txt  #affichage score dans sauvegarde.txt
+        (($sumscore>50)) &&  echo "Score de la partie numéro "$nbpartie ":" $sumscore "Bravo" >> sauvegarde.txt || echo "Score de la partie numéro "$nbpartie ":" $sumscore >> sauvegarde.txt  #affichage score dans sauvegarde.txt
 
         if (($nbpartie > 0)); then
 
