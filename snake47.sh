@@ -148,8 +148,15 @@ aleatoire() {                               #Génération points et nombres alé
     foodscore=$((RANDOM%11+1)); #generer entre 1 et 11
   
     if ((foodscore==10)) || ((foodscore==11)); then
-		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m" && byebyeetoile=150;
-		 ((foodscore==11)) && echo -ne "\033[$xrand;${yrand}H\e[33m🐢\e[0m" && byebyetortue=150;
+
+		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m";
+		 ((foodscore==10)) && ((spk==2)) && byebyeetoile=100;
+		 ((foodscore==10)) && ((spk==1)) && byebyeetoile=150;
+		 ((foodscore==10)) && ((spk==0)) && byebyeetoile=200;
+		 ((foodscore==11)) && echo -ne "\033[$xrand;${yrand}H\e[33m🐢\e[0m";
+		 ((foodscore==11)) && ((spk==2)) && byebyetortue=100;
+		 ((foodscore==11)) && ((spk==1)) && byebyetortue=150;
+		 ((foodscore==11)) && ((spk==0)) && byebyetortue=200;
 		 
 		else
 		 echo -ne "\033[$xrand;${yrand}H$foodscore";  #si 10 affiche * qui incrémente le score de 10 sans augmenter la taille du serpent
