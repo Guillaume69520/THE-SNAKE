@@ -53,7 +53,7 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
     done
 
     vitesse 0;    #affichage de la vitesse sur l'interface
-    echo -ne "\033[$Lines;$((yscore-10))H\e[36mScores: 0\e[0m"; #affichage du score en bas
+    echo -ne "\033[$Lines;$((yscore-10))H\e[36mScore:  0\e[0m"; #affichage du score en bas
     echo -ne "\033[$Lines;$((Cols-80))H\e[33mPause Espace/Entrer\e[0m";
      [ -f ./skin.txt  ] && echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : OR!!! \e[0m" || echo -ne "\033[$Lines;$((Cols-30))H\e[33m Skill : Aucun... \e[0m";
      
@@ -74,8 +74,8 @@ initialisation() {
     xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud  Horizontal
     ypt=(5 4 3 2 1);                          #Coordonné y de départ de chaque noeud Vertical
     speed=(0.02 0.1 0.15);  spk=${spk:-2};    #Vitesse par défaut
-    xtab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);  #initialisation des tableaux de position des malus
-    ytab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);
+    xtab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);  #initialisation des tableaux de position des malus
+    ytab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);
     interface $((Lines-1)) $Cols  #passage des arguments de position d'écran à interface
 }
 
@@ -146,19 +146,19 @@ affichage_malus(){   #on affiche les malus (calcul aléatoires des positions)
 
 	
 
-    for ((i=0; i<30;i++)); do
+    for ((i=0; i<35;i++)); do
 
     	xtab[$i]="$((RANDOM%(Lines-3)+2))"
 
     done
 
-    for ((j=0; j<30;j++)); do
+    for ((j=0; j<35;j++)); do
 
     	ytab[$j]="$((RANDOM%(Cols-2)+2))"
 
     done
 
-   for ((k=0; k<30;k++)); do
+   for ((k=0; k<35;k++)); do
 
     	echo -ne "\033[${xtab[$k]};${ytab[$k]}H\e[31mO\e[0m";
 
@@ -169,7 +169,7 @@ affichage_malus(){   #on affiche les malus (calcul aléatoires des positions)
 
 disparition_malus(){
 
-	for ((l=0; l<30;l++)); do
+	for ((l=0; l<35;l++)); do
 
     		echo -ne "\033[${xtab[$l]};${ytab[$l]}H\e[30mO\e[0m";
 
@@ -188,7 +188,7 @@ if ((byebyemalus>0)); then
    		 liveflag=1;   	 
  fi
 
- 	 for ((m=0; m<30;m++)); do #test de toutes les positions des malus 
+ 	 for ((m=0; m<35;m++)); do #test de toutes les positions des malus 
 
  	 	if (( x==${xtab[$m]} && y==${ytab[$m]} )); then
 
@@ -199,7 +199,12 @@ if ((byebyemalus>0)); then
     		 sumscore=$(($sumscore/2));
 
     		fi
-    		
+
+    		for ((t=0;t<10;t++)); do
+
+    			ajout_noeud;
+    		done
+
     		disparition_malus;
     	fi
    	 done  
@@ -225,8 +230,8 @@ aleatoire() {
 		 ((foodscore==11)) && ((spk==0)) && byebyetortue=200;
 		
 	     #12 et 13 = malus !
-		 ((foodscore==12)) && affichage_malus && byebyemalus=250;
-		 ((foodscore==13)) && affichage_malus && byebyemalus=250;
+		 ((foodscore==12)) && affichage_malus && byebyemalus=400;
+		 ((foodscore==13)) && affichage_malus && byebyemalus=400;
 
 		else
 		 echo -ne "\033[$xrand;${yrand}H$foodscore";  
@@ -321,7 +326,7 @@ nouvelle_partie() {
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
 
-        (($sumscore>50)) && return 1;   #si on fait 50 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
+        (($sumscore>80)) && return 1;   #si on fait 50 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
         
     done
 }
@@ -329,7 +334,7 @@ nouvelle_partie() {
 affichage() {
     local x=$((xcent-4)) y=$((ycent-25))
     
-	if (($sumscore>50)); then                                          
+	if (($sumscore>80)); then                                          
 	
 		for (( i = 0; i < 8; i++ )); do
 			echo -ne "\033[$((x+i));${y}H\e[45m${gagne[$i]}\e[0m";
