@@ -67,14 +67,15 @@ initialisation() {
     xrand=0;            yrand=0;              #Point aléatoire
     sumscore=0;         liveflag=1;           #Score total + drapeau présence de point
     sumnode=0;          foodscore=0;          #Longueur totale des noeuds et des points à augmenter
-    byebyeetoile=0;
+    byebyeetoile=0;     byebyemalus=0;
     byebyetortue=0;
     snake="0000 ";                            #Initialisation du serpent
     pos=(right right right right right);      #Direction noeud de départ
     xpt=($xline $xline $xline $xline $xline); #Coordonnée x de départ de chaque noeud  Horizontal
     ypt=(5 4 3 2 1);                          #Coordonné y de départ de chaque noeud Vertical
     speed=(0.02 0.1 0.15);  spk=${spk:-2};    #Vitesse par défaut
-
+    xtab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);  #initialisation des tableaux de position des malus
+    ytab=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0);
     interface $((Lines-1)) $Cols  #passage des arguments de position d'écran à interface
 }
 
@@ -98,7 +99,7 @@ maj() {                     #Mise à jour des coordonnées de chacuns des noeuds
 }
 
 vitesse() {                #Gestion de la vitesse / mise à jour
-     #[[ $# -eq 0 ]] && spk=$(((spk+1)%3));
+
      case $spk in
          0) temp="Ferrari";;
          1) temp="Golf" ;;
@@ -141,13 +142,78 @@ ajout_noeud() {  #Ajouter des noeuds au serpent
     return 0;
 }
 
+affichage_malus(){   #on affiche les malus (calcul aléatoires des positions)
 
-aleatoire() {                               #Génération points et nombres aléatoires
+	
+
+    for ((i=0; i<30;i++)); do
+
+    	xtab[$i]="$((RANDOM%(Lines-3)+2))"
+
+    done
+
+    for ((j=0; j<30;j++)); do
+
+    	ytab[$j]="$((RANDOM%(Cols-2)+2))"
+
+    done
+
+   for ((k=0; k<30;k++)); do
+
+    	echo -ne "\033[${xtab[$k]};${ytab[$k]}H\e[31mO\e[0m";
+
+    done
+
+  
+}
+
+disparition_malus(){
+
+	for ((l=0; l<30;l++)); do
+
+    		echo -ne "\033[${xtab[$l]};${ytab[$l]}H\e[30mO\e[0m";
+
+   	       done
+}
+
+malus(){  #gestion temps d'apparition malus + gestion collision
+
+if ((byebyemalus>0)); then
+    	    ((byebyemalus--))
+    	 
+    	 else
+    	  
+    	  disparition_malus;
+
+   		 liveflag=1;   	 
+ fi
+
+ 	 for ((m=0; m<30;m++)); do #test de toutes les positions des malus 
+
+ 	 	if (( x==${xtab[$m]} && y==${ytab[$m]} )); then
+
+    		 liveflag=1; 
+
+    		 if (($sumscore>0)); then
+
+    		 sumscore=$(($sumscore/2));
+
+    		fi
+    		
+    		disparition_malus;
+    	fi
+   	 done  
+}
+
+aleatoire() {       
+                        #Génération points et nombres aléatoires
     xrand=$((RANDOM%(Lines-3)+2));
     yrand=$((RANDOM%(Cols-2)+2));
-    foodscore=$((RANDOM%11+1)); #generer entre 1 et 11
-  
-    if ((foodscore==10)) || ((foodscore==11)); then
+    foodscore=$((RANDOM%13+1)); #generer entre 1 et 13
+   
+    #si foodscore est supérieur à 9 alors on entre dans des cas particulier (bonus ou malus)
+
+    if ((foodscore>9)); then
 
 		 ((foodscore==10)) && echo -ne "\033[$xrand;${yrand}H\e[33m★\e[0m";
 		 ((foodscore==10)) && ((spk==2)) && byebyeetoile=100;
@@ -157,13 +223,18 @@ aleatoire() {                               #Génération points et nombres alé
 		 ((foodscore==11)) && ((spk==2)) && byebyetortue=100;
 		 ((foodscore==11)) && ((spk==1)) && byebyetortue=150;
 		 ((foodscore==11)) && ((spk==0)) && byebyetortue=200;
-		 
+		
+	     #12 et 13 = malus !
+		 ((foodscore==12)) && affichage_malus && byebyemalus=250;
+		 ((foodscore==13)) && affichage_malus && byebyemalus=250;
+
 		else
-		 echo -ne "\033[$xrand;${yrand}H$foodscore";  #si 10 affiche * qui incrémente le score de 10 sans augmenter la taille du serpent
+		 echo -ne "\033[$xrand;${yrand}H$foodscore";  
     fi
 
     liveflag=0;                                      #passage à 0 pour éviter de générer encore si le point n'est pas manger par le serpent
 }
+
 evolution_vitesse(){  #évolution de la vitesse en fonction du score
 
         (($sumscore <=4 )) && spk=2 && vitesse;   #clio
@@ -179,7 +250,7 @@ bonus_etoile(){ #après un certains temps supprime l'étoile bonus
     	  echo -ne "\033[$xrand;${yrand}H\e[30m★\e[0m"
     	  liveflag=1;
     	fi
-    	(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumscore+=20));
+    	(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumscore+=20));  #colision avec le bonus on ajoute 20 points + liveflag à 1 pour nouveau nombre
 }
 
  bonus_vitesse(){ #rend le serpent moins rapide pendant un petit moment
@@ -237,13 +308,15 @@ nouvelle_partie() {
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
        
 		
-		if ((foodscore==10)) || ((foodscore==11)); then
+		if ((foodscore>9)); then
 		 	((foodscore==10)) && bonus_etoile;
 			((foodscore==11)) && bonus_vitesse;
+			((foodscore==12)) && malus;
+			((foodscore==13)) && malus;
 		 
 		else
 			(( x==xrand && y==yrand )) && ((liveflag=1)) && ((sumnode+=foodscore)) && ((sumscore+=foodscore)); #collision avec le score donc liveflag à 1 pour générer un nouveau nombre / sumnode += foodscore pour ajouter les noeuds et ajout du score
-		 
+		 	
     	fi
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
