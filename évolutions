@@ -9,7 +9,7 @@ Affichage écran gagné si on atteinds un certains score => guillaume
 Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skin.txt    => guillaume  
 Bonus étoile => Permet d'avoir 20 points d'un coup sans ajout de noeud (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
 Bonus tortue => Permet de ralentir pendant un petit moment et après retour à la normal (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
-Malus => Affiche plein de O qui sont des "bombes" si le serpent rentre dedans il perd la moitier de son score
+Malus => Affiche plein de O qui sont des "bombes" si le serpent rentre dedans il perd la moitier de son score + ajout de noeuds
 
 
 Jouer musique => maxime est en train de le faire (annulé)
