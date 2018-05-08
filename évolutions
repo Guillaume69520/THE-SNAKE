@@ -9,17 +9,16 @@ Affichage écran gagné si on atteinds un certains score => guillaume
 Snake en Or => Après 2 victoires consécutives  Fonction sauvegarde(); Utilise les fochiers sauvegardes.txt et skin.txt    => guillaume  
 Bonus étoile => Permet d'avoir 20 points d'un coup sans ajout de noeud (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
 Bonus tortue => Permet de ralentir pendant un petit moment et après retour à la normal (attention : il disparait au bout d'un certains temps si on le mange pas) => guillaume
+Malus => Affiche plein de O qui sont des "bombes" si le serpent rentre dedans il perd la moitier de son score
 
-Jouer musique => maxime est en train de le faire (test en cours)
+
+Jouer musique => maxime est en train de le faire (annulé)
 
 A faire :
 
 
-
 Mur / collisions => Le plus important désormais ! => mathieu 
 
-
-Si j'ai le temps : Un système de "vie" (un coeur à manger et qui permet en cas de crash de continuer la partie) Utile?
 
 bonbon magique qui supprime des noeuds => annulé le code n'est pas fait pour enlever des noeuds...
 
