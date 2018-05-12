@@ -61,7 +61,7 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
 
 initialisation() {
     Lines=`tput lines`; Cols=`tput cols`;     # Longueur / Largeur écran
-    xline=$((Lines/2)); ycols=4;              #Position de départ  Utilité du ycols ???
+    xline=$((Lines/2));                       #Position de départ  
     xscore=$Lines;      yscore=$((Cols/2));   #Imprimer position du score
     xcent=$xline;       ycent=$yscore;        #Emplacement point central
     xrand=0;            yrand=0;              #Point aléatoire
@@ -79,9 +79,9 @@ initialisation() {
     interface $((Lines-1)) $Cols  #passage des arguments de position d'écran à interface
 }
 
-pause() {               #Jeu de rôle
+pause() {              
     echo -en "\033[$Lines;$((Cols-80))H\e[33mJeu en pause !  Entrer ou Espace\e[0m";
-    while read -n 1 space; do
+    while read -n 1 space; do  #while pour arrter la boucle principale tant que l(user n'a pas appuyer sur entrer
         [[ ${space:-enter} = enter ]] && \
             echo -en "\033[$Lines;$((Cols-80))H\e[33m Pause ? Espace / Entrer           \e[0m" && return;
         [[ ${space:-enter} = q ]] && quitter;
@@ -111,7 +111,7 @@ vitesse() {                #Gestion de la vitesse / mise à jour
 Direction() {                                   #Mise à jour de la direction
     case ${key:-enter} in
         5) [[ ${pos[0]} != "up"    ]] && pos[0]="down";;        #gestion des auto-collisions
-        8) [[ ${pos[0]} != "down"  ]] && pos[0]="up";;
+        8) [[ ${pos[0]} != "down"  ]] && pos[0]="up";;          #ex: si on appuie sur haut si le serpet descend...
         4) [[ ${pos[0]} != "right" ]] && pos[0]="left";;
         6) [[ ${pos[0]} != "left"  ]] && pos[0]="right";;
         q|Q) quitter;;
@@ -144,34 +144,24 @@ ajout_noeud() {  #Ajouter des noeuds au serpent
 
 affichage_malus(){   #on affiche les malus (calcul aléatoires des positions)
 
-	
-
-    for ((i=0; i<35;i++)); do
-
+    for ((i=0; i<35;i++)); do           #35 = nombres de malus
     	xtab[$i]="$((RANDOM%(Lines-3)+2))"
-
     done
-
+    
     for ((j=0; j<35;j++)); do
-
     	ytab[$j]="$((RANDOM%(Cols-2)+2))"
-
     done
 
-   for ((k=0; k<35;k++)); do
-
+   for ((k=0; k<35;k++)); do  #affichage en fonction des positions calculées précedemment
     	echo -ne "\033[${xtab[$k]};${ytab[$k]}H\e[31mO\e[0m";
-
     done
-
-  
 }
 
 disparition_malus(){
 
 	for ((l=0; l<35;l++)); do
 
-    		echo -ne "\033[${xtab[$l]};${ytab[$l]}H\e[30mO\e[0m";
+    		echo -ne "\033[${xtab[$l]};${ytab[$l]}H\e[30mO\e[0m"; 
 
    	       done
 }
@@ -184,11 +174,10 @@ if ((byebyemalus>0)); then
     	 else
     	  
     	  disparition_malus;
-
-   		 liveflag=1;   	 
+          liveflag=1;   	 
  fi
 
- 	 for ((m=0; m<35;m++)); do #test de toutes les positions des malus 
+ 	 for ((m=0; m<35;m++)); do #test de toutes les positions des malus pour voiri si collision
 
  	 	if (( x==${xtab[$m]} && y==${ytab[$m]} )); then
 
@@ -285,15 +274,15 @@ nouvelle_partie() {
 
         fi
 
-        read -t ${speed[$spk]} -n 1 key;
-        [[ $? -eq 0 ]] && Direction;
+        read -t ${speed[$spk]} -n 1 key; #lecture touche
+        [[ $? -eq 0 ]] && Direction; #si pas d'erreur on actualise la position
 
-        ((liveflag==0)) || aleatoire; #si liveflag 0 on générer un nouveau foodscor
+        ((liveflag==0)) || aleatoire; #si liveflag 0 on générer un nouveau foodscore
 
         if (( sumnode > 0 )); then
             ((sumnode--));   # on décrémente jusqu'à zéro pour ajouter les noeud un par un 
              ajout_noeud; 
-             (($?==0)) || return 1;
+             (($?==0)) || return 1; #si erreur on sort de la boucle
         else
             maj 0; 
             [ -f ./skin.txt  ] && echo -ne "\033[${xpt[0]};${ypt[0]}H\e[33m${snake[@]:0:1}\e[0m" || echo -ne "\033[${xpt[0]};${ypt[0]}H\e[32m${snake[@]:0:1}\e[0m";   
@@ -302,7 +291,7 @@ nouvelle_partie() {
                 maj $i;
                  [ -f ./skin.txt  ] && echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[33m${snake[@]:$i:1}\e[0m" || echo -ne "\033[${xpt[$i]};${ypt[$i]}H\e[32m${snake[@]:$i:1}\e[0m";    
 
-                (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crashed
+                (( ${xpt[0]} == ${xpt[$i]} && ${ypt[0]} == ${ypt[$i]} )) && return 1; #crash
                 [[ ${pos[$((i-1))]} = ${pos[$i]} ]] || pos[$i]=${pos[$((i-1))]};
             done
         
@@ -312,7 +301,6 @@ nouvelle_partie() {
         local x=${xpt[0]} y=${ypt[0]}
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
        
-		
 		if ((foodscore>9)); then
 		 	((foodscore==10)) && bonus_etoile;
 			((foodscore==11)) && bonus_vitesse;
@@ -326,7 +314,7 @@ nouvelle_partie() {
 
         echo -ne "\033[$xscore;$((yscore-2))H$sumscore"; #affichage du nouveau score
 
-        (($sumscore>80)) && return 1;   #si on fait 50 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
+        (($sumscore>80)) && return 1;   #si on fait 80 points on sort de la boucle principale on va a affichage qui s'occupera d'imprimer "Gagne"
         
     done
 }
@@ -334,20 +322,20 @@ nouvelle_partie() {
 affichage() {
     local x=$((xcent-4)) y=$((ycent-25))
     
-	if (($sumscore>80)); then                                          
+	if (($sumscore>80)); then       #si on gagne                                   
 	
 		for (( i = 0; i < 8; i++ )); do
 			echo -ne "\033[$((x+i));${y}H\e[45m${gagne[$i]}\e[0m";
 		done
 	else
 	
-		for (( i = 0; i < 8; i++ )); do
+		for (( i = 0; i < 8; i++ )); do  #si on perd affiche de fin
 			echo -ne "\033[$((x+i));${y}H\e[45m${perdue[$i]}\e[0m";
 		done
 	
 	fi
 
-    echo -ne "\033[$((x+3));$((ycent+1))H\e[45m${sumscore}\e[0m";
+    echo -ne "\033[$((x+3));$((ycent+1))H\e[45m${sumscore}\e[0m"; #affichage du score écran de fin /gagne
        
 }
 
@@ -374,24 +362,24 @@ sauvegarde(){
 
 serpent() {
     
-    initialisation;
+    initialisation; #mise en place du plateau de jeu / init variables
 
     local x=$((xcent-5)) y=$((ycent-25))
     for (( i = 0; i < 10; i++ )); do
-        echo -ne "\033[$((x+i));${y}H\e[45m${jeux[$i]}\e[0m";
+        echo -ne "\033[$((x+i));${y}H\e[45m${jeux[$i]}\e[0m"; #ecran de depart
     done
 
-    while read -n 1 anykey; do
-        [[ ${anykey:-enter} = enter ]] && break;
-        [[ ${anykey:-enter} = q ]] && quitter;
+    while read -n 1 anykey; do 
+        [[ ${anykey:-enter} = enter ]] && break; #enter on commence le jeu
+        [[ ${anykey:-enter} = q ]] && quitter; #pour quitter 
     done
     
     while true; do
-        nouvelle_partie;
-        
-        sauvegarde;
-
-        affichage;
+    
+        nouvelle_partie; 
+        sauvegarde; #sauvegarde fin de partie
+        affichage; #affichage fin de jeu
+	
         while read -n 1 anykey; do
             [[ $anykey = n ]] && break;
             [[ $anykey = q ]] && quitter;
