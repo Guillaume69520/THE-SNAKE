@@ -51,7 +51,7 @@ interface() {         # Dessine les bordures de l'interface  $1=longueur cadre -
         echo -ne "\033[0;${i}H${color}"; #haut
         echo -ne "\033[$1;${i}H${color}"; #bas
     done
-
+   
     vitesse 0;    #affichage de la vitesse sur l'interface
     echo -ne "\033[$Lines;$((yscore-10))H\e[36mScore:  0\e[0m"; #affichage du score en bas
     echo -ne "\033[$Lines;$((Cols-80))H\e[33mPause Espace/Entrer\e[0m";
@@ -79,9 +79,42 @@ initialisation() {
     interface $((Lines-1)) $Cols  #passage des arguments de position d'écran à interface
 }
 
+dessiner_murs(){
+	
+	lvl1fstwallpos=$2/4
+	lvl1scndwallpos=$2/4*3
+	lvl1walllength=$Lines/2
+	lvl2wallpos=$2/2
+	lvl2walllength=$Lines/4
+
+	color="\e[33m*\e[0m";
+	if [ "$1" == "lvl1" ];then 
+
+		for (( i = 0; i < $lvl1walllength; i++ )); do
+			echo -ne "\033[$i;$((lvl1fstwallpos))H${color}";
+		done
+		
+		for (( i = $lvl1walllength; i < $Lines; i++ )); do
+			echo -ne "\033[$i;$((lvl1scndwallpos))H${color}";
+		done
+
+	elif [ "$1" == "lvl2" ];then
+		for (( i = 0; i < $lvl2walllength; i++)); do	
+			echo -ne "\033[$i;$((lvl2wallpos))H${color}";
+		done
+	
+		for (( i = 3*$lvl2walllength; i < $Lines; i++)); do	
+			echo -ne "\033[$i;$((lvl2wallpos))H${color}";
+		done
+	fi
+
+}
+
+
+
 pause() {              
     echo -en "\033[$Lines;$((Cols-80))H\e[33mJeu en pause !  Entrer ou Espace\e[0m";
-    while read -n 1 space; do  #while pour arrter la boucle principale tant que l(user n'a pas appuyer sur entrer
+    while read -n 1 space; do  #while pour arrter la boucle principale tant que le user n'a pas appuyer sur entrer
         [[ ${space:-enter} = enter ]] && \
             echo -en "\033[$Lines;$((Cols-80))H\e[33m Pause ? Espace / Entrer           \e[0m" && return;
         [[ ${space:-enter} = q ]] && quitter;
@@ -110,10 +143,10 @@ vitesse() {                #Gestion de la vitesse / mise à jour
 
 Direction() {                                   #Mise à jour de la direction
     case ${key:-enter} in
-        5) [[ ${pos[0]} != "up"    ]] && pos[0]="down";;        #gestion des auto-collisions
-        8) [[ ${pos[0]} != "down"  ]] && pos[0]="up";;          #ex: si on appuie sur haut si le serpet descend...
-        4) [[ ${pos[0]} != "right" ]] && pos[0]="left";;
-        6) [[ ${pos[0]} != "left"  ]] && pos[0]="right";;
+        k) [[ ${pos[0]} != "up"    ]] && pos[0]="down";;        #gestion des auto-collisions
+        i) [[ ${pos[0]} != "down"  ]] && pos[0]="up";;          #ex: si on appuie sur haut si le serpet descend...
+        j) [[ ${pos[0]} != "right" ]] && pos[0]="left";;
+        l) [[ ${pos[0]} != "left"  ]] && pos[0]="right";;
         q|Q) quitter;;
       enter) pause;;
     esac
@@ -300,8 +333,20 @@ nouvelle_partie() {
 
         local x=${xpt[0]} y=${ypt[0]}
         (( ((x>=$((Lines-1)))) || ((x<=1)) || ((y>=Cols)) || ((y<=1)) )) && return 1; #collsion mur
-       
-		if ((foodscore>9)); then
+	
+	if ((sumscore>=10));then
+		dessiner_murs lvl1 $Cols;
+		(( ((x<=$((Lines-2))/2)) && ((y==$lvl1fstwallpos)) )) && return 1; 
+		(( ((x>$((Lines-2))/2)) && ((y==$lvl1scndwallpos)) )) && return 1;
+	fi       	
+	if ((sumscore>=15));then
+		dessiner_murs lvl2 $Cols;
+		(( ((x<=$((Lines-2))/4)) && ((y==$lvl2wallpos)) )) && return 1; 
+		(( ((x>=$((Lines-2))/4*3)) && ((y==$lvl2wallpos)) )) && return 1; 
+	fi	
+
+	
+	if ((foodscore>9)); then
 		 	((foodscore==10)) && bonus_etoile;
 			((foodscore==11)) && bonus_vitesse;
 			((foodscore==12)) && malus;
