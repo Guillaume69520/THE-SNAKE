@@ -236,6 +236,9 @@ aleatoire() {
                         #Génération points et nombres aléatoires
     xrand=$((RANDOM%(Lines-3)+2));
     yrand=$((RANDOM%(Cols-2)+2));
+    if (( (( $yrand==$(($Cols/4)) )) || (($yrand==$(($Cols/4*3)))) || (($yrand==$(($Cols/2)))) )); then
+		yrand+=1
+    fi
     foodscore=$((RANDOM%13+1)); #generer entre 1 et 13
    
     #si foodscore est supérieur à 9 alors on entre dans des cas particulier (bonus ou malus)
